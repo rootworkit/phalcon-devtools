@@ -829,4 +829,149 @@ class Migration
 
         return $versions;
     }
+
+    /**
+     * Generates simple migrations for all tables.
+     *
+     * @param  string $version
+     * @param  string $exportData
+     * @param  bool   $create
+     *
+     * @return array
+     * @throws DbException
+     */
+    public static function generateSimpleAll($version, $exportData = null, $create = false)
+    {
+        $classDefinition = array();
+        if (self::$_databaseConfig->adapter == 'Postgresql') {
+            $tables = self::$_connection->listTables(isset(self::$_databaseConfig->schema) ? self::$_databaseConfig->schema : 'public');
+        } else {
+            $tables = self::$_connection->listTables();
+        }
+
+        foreach ($tables as $table) {
+            $classDefinition[$table] = self::generateSimple($version, $table, $exportData, $create);
+        }
+
+        return $classDefinition;
+    }
+
+    /**
+     * Generate a simple table migration
+     *
+     * @param string    $version
+     * @param string    $table
+     * @param bool|null $exportData
+     * @param bool      $create
+     *
+     * @return string
+     * @throws Exception
+     */
+    public static function generateSimple($version, $table, $exportData = null, $create = false)
+    {
+        $snippet        = new Snippet();
+        $allFields      = [];
+
+        foreach (self::$_connection->describeColumns($table) as $field) {
+            $allFields[] = "'".$field->getName()."'";
+        }
+
+        $classData = '';
+
+        // up()
+        if ($create) {
+            $result         = self::$_connection->fetchOne("SHOW CREATE TABLE $table");
+            $description    = isset($result['Create View']) ? $result['Create View'] : $result['Create Table'];
+            $createSql      = self::getSafeCreate($description);
+            $classData     .= $snippet->getMigrationUpSimpleCreate($createSql);
+
+            if ($exportData == 'oncreate' || $exportData == 'always') {
+                $classData .= PHP_EOL . $snippet->getMigrationBatchInsert($table, $allFields);
+            }
+        } else {
+            $classData .= $snippet->getMigrationUp();
+
+            if ($exportData == 'always' && $create) {
+                $classData .= PHP_EOL . $snippet->getMigrationBatchInsert($table, $allFields);
+            }
+        }
+
+        $classData .= "\n    }\n";
+
+        // down()
+        $classData .= $snippet->getMigrationDown();
+
+        if ($exportData == 'always') {
+            $classData .= $snippet->getMigrationBatchDelete($table);
+        }
+
+        $classData .= "\n    }\n";
+
+        // full class
+        $classVersion   = preg_replace('/[^0-9A-Za-z]/', '', $version);
+        $className      = Text::camelize($table) . 'Migration_'.$classVersion;
+        $namespace      = '';
+        $doc            = $snippet->getClassDoc($className, $namespace);
+        $use            = $snippet->getUse('Phalcon\Mvc\Model\Migration') . PHP_EOL . PHP_EOL;
+        $classData      = $snippet->getClass($namespace, $use, $doc, '', $className, 'Migration', $classData);
+
+        // dump data
+        if ($exportData == 'always' || $exportData == 'oncreate') {
+            $fileHandler = fopen(self::$_migrationPath . $version . '/' . $table . '.dat', 'w');
+            $cursor = self::$_connection->query('SELECT * FROM ' . $table);
+            $cursor->setFetchMode(Db::FETCH_ASSOC);
+            while ($row = $cursor->fetchArray()) {
+                $data = array();
+                foreach ($row as $key => $value) {
+                    if (isset($numericFields[$key])) {
+                        if ($value==='' || is_null($value)) {
+                            $data[] = 'NULL';
+                        } else {
+                            $data[] = addslashes($value);
+                        }
+                    } else {
+                        $data[] = "'".addslashes($value)."'";
+                    }
+
+                    unset($value);
+                }
+
+                fputs($fileHandler, join('|', $data).PHP_EOL);
+                unset($row);
+                unset($data);
+            }
+
+            fclose($fileHandler);
+        }
+
+        return $classData;
+    }
+
+    /**
+     * Make a create table or view statement safe.
+     *
+     * Note: Won't replace/overwrite table but will replace view.
+     *
+     * @param string $createSql
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    protected static function getSafeCreate($createSql)
+    {
+        // Table definition
+        if (strpos($createSql, 'CREATE TABLE') === 0) {
+            return str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $createSql);
+        }
+
+        // View definition
+        if (strpos($createSql, 'CREATE ALGORITHM') === 0) {
+            return str_replace('CREATE ALGORITHM', 'CREATE OR REPLACE ALGORITHM', $createSql);
+        }
+
+        throw new Exception(
+            'The create statement is not for either a table or a view.'. PHP_EOL .
+            $createSql
+        );
+    }
 }

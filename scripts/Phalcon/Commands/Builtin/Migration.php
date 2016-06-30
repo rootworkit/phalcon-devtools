@@ -52,6 +52,8 @@ class Migration extends Command
             'force'             => 'Forces to overwrite existing migrations',
             'no-auto-increment' => 'Disable auto increment (Generating only)',
             'data=s'            => 'Export data [always|oncreate] (Import data when run migration)',
+            'simple'            => 'Generates simple SQL migration stubs rather than Phalcon migrations',
+            'simple-create'     => 'Generates simple SQL "CREATE" migrations rather than Phalcon migrations',
         );
     }
 
@@ -115,7 +117,9 @@ class Migration extends Command
                 'originalVersion' => $originalVersion,
                 'force'           => $this->isReceivedOption('force'),
                 'no-ai'           => $this->isReceivedOption('no-auto-increment'),
-                'config'          => $config
+                'config'          => $config,
+                'simple'          => $this->isReceivedOption('simple'),
+                'simpleCreate'    => $this->isReceivedOption('simple-create'),
             ));
         } else {
             if ($action == 'run') {

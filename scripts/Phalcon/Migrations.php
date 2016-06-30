@@ -51,6 +51,8 @@ class Migrations
         $originalVersion = $options['originalVersion'];
         $force = $options['force'];
         $config = $options['config'];
+        $simple = $options['simple'];
+        $simpleCreate = $options['simpleCreate'];
 
         if ($migrationsDir && !file_exists($migrationsDir)) {
             mkdir($migrationsDir, 0777, true);
@@ -91,13 +93,25 @@ class Migrations
         ModelMigration::setMigrationPath($migrationsDir);
 
         if ($tableName == 'all') {
-            $migrations = ModelMigration::generateAll($version, $exportData);
+            if ($simple || $simpleCreate) {
+                $migrations = ModelMigration::generateSimpleAll($version, $exportData, $simpleCreate);
+            } else {
+                $migrations = ModelMigration::generateAll($version, $exportData);
+            }
+
             foreach ($migrations as $tableName => $migration) {
-                file_put_contents($migrationsDir.'/'.$version.'/'.$tableName.'.php', '<?php '.PHP_EOL.PHP_EOL.$migration);
+                $migration = (strpos($migration, '<?php') !== 0) ? '<?php'.PHP_EOL.PHP_EOL.$migration : $migration;
+                file_put_contents($migrationsDir.'/'.$version.'/'.$tableName.'.php', $migration);
             }
         } else {
-            $migration = ModelMigration::generate($version, $tableName, $exportData);
-            file_put_contents($migrationsDir.'/'.$version.'/'.$tableName.'.php', '<?php '.PHP_EOL.PHP_EOL.$migration);
+            if ($simple || $simpleCreate) {
+                $migration = ModelMigration::generateSimple($version, $tableName, $exportData, $simpleCreate);
+            } else {
+                $migration = ModelMigration::generate($version, $tableName, $exportData);
+            }
+
+            $migration = (strpos($migration, '<?php') !== 0) ? '<?php'.PHP_EOL.PHP_EOL.$migration : $migration;
+            file_put_contents($migrationsDir.'/'.$version.'/'.$tableName.'.php', $migration);
         }
 
         if (self::isConsole()) {
