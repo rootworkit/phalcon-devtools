@@ -1,11 +1,93 @@
-[![Latest Version](https://img.shields.io/packagist/v/phalcon/devtools.svg?style=flat-square)](https://github.com/phalcon/incubator/devtools)
-[![Software License](https://img.shields.io/badge/license-BSD--3-brightgreen.svg?style=flat-square)][1]
-[![Total Downloads](https://img.shields.io/packagist/dt/phalcon/devtools.svg?style=flat-square)](https://packagist.org/packages/phalcon/devtools)
-[![Daily Downloads](https://img.shields.io/packagist/dd/phalcon/devtools.svg?style=flat-square)](https://packagist.org/packages/phalcon/devtools)
-
 # Phalcon Devtools
 
-![Webtools](http://static.phalconphp.com/img/webtools.png)
+A custom build of Phalcon Devtools with added features.
+
+## Added Features
+
+### Simple Migrations
+Simple migrations are an alternative the normal Phalcon migrations that allow you to use simple SQL queries for your DB migrations.
+
+#### Generate a simple migration class with empty up() and down() methods where you can add SQL queries to accomplish your migrations.
+```sh
+phalcon migration generate --table=users --simple
+```
+
+#### Result:
+```php
+use Phalcon\Mvc\Model\Migration;
+
+/**
+ * Class UsersMigration_100
+ */
+class UsersMigration_100 extends Migration
+{
+
+    /**
+     * Run the migrations
+     *
+     * @return void
+     */
+    public function up()
+    {
+        self::$_connection->execute("ALTER TABLE users ADD COLUMN foo VARCHAR(100)");
+        self::$_connection->execute("UPDATE users SET name = 'bar'");
+    }
+
+    /**
+     * Reverse the migrations
+     *
+     * @return void
+     */
+    public function down()
+    {
+        self::$_connection->execute("ALTER TABLE users DROP COLUMN foo");
+    }
+}
+```
+
+#### Generate an initial migration class with a CREATE TABLE statement (works for views as well).
+```sh
+phalcon migration generate --table=users --simple --simple-create
+```
+
+#### Result:
+```php
+use Phalcon\Mvc\Model\Migration;
+
+/**
+ * Class UsersMigration_100
+ */
+class UsersMigration_100 extends Migration
+{
+
+    /**
+     * Run the migrations
+     *
+     * @return void
+     */
+    public function up()
+    {
+        self::$_connection->execute("
+            CREATE TABLE IF NOT EXISTS `users` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `email` varchar(128) DEFAULT NULL,
+                `password` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `email` (`email`)
+            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ");
+    }
+
+    /**
+     * Reverse the migrations
+     *
+     * @return void
+     */
+    public function down()
+    {
+    }
+}
+```
 
 ## What's Phalcon?
 
@@ -34,17 +116,7 @@ Create the composer.json file as follows:
 ```json
 {
     "require": {
-        "phalcon/devtools": "^2.0"
-    }
-}
-```
-
-If you are still using Phalcon 1.3.x, create a composer.json with the following instead:
-
-```json
-{
-    "require": {
-        "phalcon/devtools": "1.3.*@dev"
+        "rootwork/phalcon-devtools": "dev-custom"
     }
 }
 ```
@@ -79,7 +151,7 @@ Just clone the repo and checkout the current branch:
 
 ```bash
 cd ~
-git clone https://github.com/phalcon/phalcon-devtools.git
+git clone https://github.com/rootworkit/phalcon-devtools.git
 cd phalcon-devtools
 ```
 
