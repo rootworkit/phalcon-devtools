@@ -23,11 +23,6 @@
             "Phalcon\\" : "scripts/Phalcon/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-custom": "2.0.x-dev"
-        }
-    },
     "replace": {
         "phalcon/devtools": "2.0.x"
     },
