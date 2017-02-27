@@ -34,6 +34,7 @@ use Phalcon\Commands\Builtin\AllModels;
 use Phalcon\Commands\Builtin\Migration;
 use Phalcon\Commands\Builtin\Enumerate;
 use Phalcon\Commands\Builtin\Controller;
+use Phalcon\Commands\Builtin\SimpleMigration;
 use Phalcon\Exception as PhalconException;
 use Phalcon\Events\Manager as EventsManager;
 
