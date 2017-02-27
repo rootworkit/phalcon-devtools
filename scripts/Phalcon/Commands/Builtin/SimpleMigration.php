@@ -115,7 +115,7 @@ class SimpleMigration extends Command
      */
     public function getCommands()
     {
-        return ['simple-migration'];
+        return ['simple-migration', 'create-simple-migration'];
     }
 
     /**
