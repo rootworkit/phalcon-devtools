@@ -1,14 +1,18 @@
 {
-    "name": "phalcon/devtools",
+    "name": "rootwork/phalcon-devtools",
     "type": "library",
-    "description": "This tools provide you useful scripts to generate code helping to develop faster and easy applications that use with Phalcon framework.",
+    "description": "Custom build of Phalcon devtools that provides the simple-migration commend.",
     "keywords": ["framework", "phalcon", "devtools", "webtools", "phar"],
-    "homepage": "http://phalconphp.com",
+    "homepage": "https://github.com/rootworkit/phalcon-devtools",
     "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Phalcon Team",
             "email": "team@phalconphp.com"
+        },
+        {
+            "name": "Mike Soule",
+            "email": "mike@rootwork.it"
         }
     ],
     "require": {
