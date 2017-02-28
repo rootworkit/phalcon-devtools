@@ -188,14 +188,18 @@ class SimpleMigration extends Migration
      */
     public static function getObjectType($object)
     {
-        $sql = self::getObjectsListSql() . " AND name = '$object'";
-        $result = self::$_connection->fetchOne($sql);
+        $sql    = self::getObjectsListSql() . " AND name = '$object'";
+        $type   = null;
 
-        if (!empty($result)) {
-            return $result['type'];
+        foreach (self::$_connection->fetchAll($sql) as $row) {
+            $type = $row['type'];
+
+            if ($type != 'TABLE') {
+                return $type;
+            }
         }
 
-        return null;
+        return $type;
     }
 
     /**
@@ -283,8 +287,7 @@ EOD;
         $result     = self::$_connection->fetchOne("SHOW CREATE VIEW $name");
         $createSql  = $result['Create View'];
         $createSql  = 'CREATE OR REPLACE ' . substr($createSql, strpos($createSql, "VIEW `$name`"));
-        $lines      = explode("\n", $createSql);
-        $lines      = array_map('trim', $lines);
+        $lines      = self::getSqlLines($createSql);
         $first      = array_shift($lines);
         $last       = array_pop($lines);
 
@@ -383,5 +386,47 @@ EOD;
 EOD;
 
         return sprintf($template, join("\n                ", $lines));
+    }
+
+    /**
+     * Get array of lines from an SQL statement.
+     *
+     * @param string $sql
+     * @param int    $max
+     *
+     * @return array
+     */
+    protected static function getSqlLines($sql, $max = 55)
+    {
+        $sql        = preg_replace('/ select /i', ' SELECT ', $sql);
+        $parts      = explode(',', $sql);
+        $line       = array_shift($parts) . ', ';
+        $lines      = [];
+
+        foreach ($parts as $part) {
+            if (strlen($line) < $max) {
+                $line .= "$part, ";
+            } else {
+                $lines[] = $line;
+                $line    = '';
+            }
+        }
+
+        $lastLine   = rtrim($line, ', ');
+        $delimiters = ['FROM', 'WHERE', 'GROUP BY', 'HAVING', 'ORDER BY', 'LIMIT'];
+
+        foreach ($delimiters as $delimiter) {
+            $lastLines = preg_split("/ $delimiter /i", $lastLine);
+
+            if (count($lastLines) > 1) {
+                $lines[]    = array_shift($lastLines);
+                $lastLine   = "$delimiter " . array_shift($lastLines);
+            }
+        }
+
+        $lines[]    = $lastLine;
+        $lines      = array_map('trim', $lines);
+
+        return $lines;
     }
 }

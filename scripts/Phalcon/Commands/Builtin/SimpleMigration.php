@@ -41,7 +41,7 @@ class SimpleMigration extends Command
             'version=s'         => 'Version to migrate',
             'force'             => 'Forces to overwrite existing migrations',
             'no-auto-increment' => 'Disable auto increment (Generating only)',
-            'help'              => 'Shows this help [optional]',
+            'data=s'            => 'Export data [always|oncreate] (Import data when run migration)',
         ];
     }
 
@@ -79,6 +79,7 @@ class SimpleMigration extends Command
         $objectName = $this->isReceivedOption('object') ? $this->getOption('object') : '@';
         $descr = $this->getOption('descr');
         $action = $this->getOption(['action', 1]);
+        $exportData = $this->getOption('data');
         $version = $this->getOption('version');
 
         switch ($action) {
@@ -86,6 +87,7 @@ class SimpleMigration extends Command
                 SimpleMigrations::generate([
                     'directory'       => $path,
                     'objectName'      => $objectName,
+                    'exportData'      => $exportData,
                     'migrationsDir'   => $migrationsDir,
                     'version'         => $version,
                     'force'           => $this->isReceivedOption('force'),
