@@ -59,20 +59,14 @@ class SimpleMigrations
             $migrations = ModelMigration::generateAll($versionItem, $exportData);
             foreach ($migrations as $objectName => $migration) {
                 $objectFile = $migrationPath . DIRECTORY_SEPARATOR . $objectName . '.php';
-                $wasMigrated = file_put_contents(
-                        $objectFile,
-                        '<?php' . PHP_EOL . PHP_EOL . $migration
-                    ) || $wasMigrated;
+                $wasMigrated = file_put_contents($objectFile, $migration) || $wasMigrated;
             }
         } else {
             $objects = explode(',', $objectName);
             foreach ($objects as $object) {
                 $migration = ModelMigration::generate($versionItem, $object, $exportData);
                 $objectFile = $migrationPath . DIRECTORY_SEPARATOR . $object . '.php';
-                $wasMigrated = file_put_contents(
-                    $objectFile,
-                    '<?php' . PHP_EOL . PHP_EOL . $migration
-                );
+                $wasMigrated = file_put_contents($objectFile, $migration);
             }
         }
 
