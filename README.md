@@ -1,10 +1,9 @@
 # Phalcon Devtools
 
-[![Latest Version](https://img.shields.io/packagist/v/phalcon/devtools.svg?style=flat-square)][:devtools:]
-[![Software License](https://img.shields.io/badge/license-BSD--3-brightgreen.svg?style=flat-square)][:license:]
-[![Total Downloads](https://img.shields.io/packagist/dt/phalcon/devtools.svg?style=flat-square)][:packagist:]
-[![Daily Downloads](https://img.shields.io/packagist/dd/phalcon/devtools.svg?style=flat-square)][:packagist:]
-[![Build Status](https://travis-ci.org/phalcon/phalcon-devtools.svg?branch=master)][:travis:]
+[![Latest Version](https://img.shields.io/packagist/v/rootwork/phalcon-devtools.svg?style=flat-square)](https://github.com/rootworkit/phalcon-devtools)
+[![Software License](https://img.shields.io/badge/license-BSD--3-brightgreen.svg?style=flat-square)][1]
+[![Total Downloads](https://img.shields.io/packagist/dt/rootwork/phalcon-devtools.svg?style=flat-square)](https://packagist.org/packages/rootwork/phalcon-devtools)
+[![Daily Downloads](https://img.shields.io/packagist/dd/rootwork/phalcon-devtools.svg?style=flat-square)](https://packagist.org/packages/rootwork/phalcon-devtools)
 
 ![Phalcon WebTools](https://cloud.githubusercontent.com/assets/1256298/18617851/b7d31558-7de2-11e6-83e0-30e5902af714.png)
 
@@ -15,8 +14,13 @@ Phalcon PHP is a web framework delivered as a C extension providing high perform
 
 ## What are Devtools?
 
-This tools provide you useful scripts to generate code helping to develop faster and easy applications that use
+Devtools provides you useful scripts to generate code helping to develop faster and easy applications that use
 with Phalcon framework.
+
+## What's different in the Rootwork version?
+
+This fork adds a command called "simple-migration" which generates migrations that use simple SQL statements.
+It supports tables, views, events, triggers, functions, and procedures.
 
 ## Requirements
 
@@ -36,7 +40,7 @@ Create the composer.json file as follows:
 ```json
 {
     "require-dev": {
-        "phalcon/devtools": "~3.0"
+        "rootwork/phalcon-devtools": "~3.0"
     }
 }
 ```
@@ -46,7 +50,7 @@ If you are still using Phalcon 2.0.x, create a `composer.json` with the followin
 ```json
 {
     "require-dev": {
-        "phalcon/devtools": "^2.0"
+        "rootwork/phalcon-devtools": "^2.0"
     }
 }
 ```
@@ -81,7 +85,7 @@ Just clone the repo and checkout the current branch:
 
 ```bash
 cd ~
-git clone https://github.com/phalcon/phalcon-devtools.git
+git clone https://github.com/rootwork/phalcon-devtools.git
 cd phalcon-devtools
 ```
 
@@ -128,6 +132,7 @@ Available commands:
   project          (alias of: create-project)
   scaffold         (alias of: create-scaffold)
   migration        (alias of: create-migration)
+  simple-migration (alias of: create-simple-migration)
   webtools         (alias of: create-webtools)
 ```
 
@@ -152,7 +157,6 @@ $config = [
 Phalcon Developer Tools is open source software licensed under the [New BSD License][:license:].<br>
 © Phalcon Framework Team and contributors
 
-[:packagist:]: https://packagist.org/packages/phalcon/devtools
-[:devtools:]: https://github.com/phalcon/phalcon-devtools
+[:packagist:]: https://packagist.org/packages/rootwork/phalcon-devtools
+[:devtools:]: https://github.com/rootworkit/phalcon-devtools
 [:license:]: https://github.com/phalcon/phalcon-devtools/blob/master/LICENSE.txt
-[:travis:]: https://travis-ci.org/phalcon/phalcon-devtools
