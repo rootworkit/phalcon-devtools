@@ -113,10 +113,7 @@ class SimpleMigrations
         foreach ($objects as $object) {
             $migration = ModelMigration::create($versionItem, $object);
             $objectFile = $migrationPath . DIRECTORY_SEPARATOR . $object . '.php';
-            $wasMigrated = file_put_contents(
-                $objectFile,
-                '<?php' . PHP_EOL . PHP_EOL . $migration
-            );
+            $wasMigrated = file_put_contents($objectFile, $migration);
         }
 
         if (self::isConsole() && $wasMigrated) {
