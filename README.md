@@ -1,7 +1,7 @@
-[![Latest Version](https://img.shields.io/packagist/v/phalcon/devtools.svg?style=flat-square)](https://github.com/phalcon/incubator/devtools)
+[![Latest Version](https://img.shields.io/packagist/v/rootwork/phalcon-devtools.svg?style=flat-square)](https://github.com/rootworkit/phalcon-devtools)
 [![Software License](https://img.shields.io/badge/license-BSD--3-brightgreen.svg?style=flat-square)][1]
-[![Total Downloads](https://img.shields.io/packagist/dt/phalcon/devtools.svg?style=flat-square)](https://packagist.org/packages/phalcon/devtools)
-[![Daily Downloads](https://img.shields.io/packagist/dd/phalcon/devtools.svg?style=flat-square)](https://packagist.org/packages/phalcon/devtools)
+[![Total Downloads](https://img.shields.io/packagist/dt/rootwork/phalcon-devtools.svg?style=flat-square)](https://packagist.org/packages/rootwork/phalcon-devtools)
+[![Daily Downloads](https://img.shields.io/packagist/dd/rootwork/phalcon-devtools.svg?style=flat-square)](https://packagist.org/packages/rootwork/phalcon-devtools)
 
 # Phalcon Devtools
 
@@ -34,12 +34,12 @@ Create the composer.json file as follows:
 ```json
 {
     "require": {
-        "phalcon/devtools": "^2.0"
+        "rootwork/phalcon-devtools": "^2.0"
     }
 }
 ```
 
-If you are still using Phalcon 1.3.x, create a composer.json with the following instead:
+Simple Migrations are not supported in Phalcon 1.x, so just use the official Phalcon devtools instead:
 
 ```json
 {
@@ -79,7 +79,7 @@ Just clone the repo and checkout the current branch:
 
 ```bash
 cd ~
-git clone https://github.com/phalcon/phalcon-devtools.git
+git clone https://github.com/rootworkit/phalcon-devtools.git
 cd phalcon-devtools
 ```
 
@@ -119,6 +119,7 @@ Available commands:
   project          (alias of: create-project)
   scaffold         (alias of: create-scaffold)
   migration        (alias of: create-migration)
+  simple-migration (alias of: create-simple-migration)
   webtools         (alias of: create-webtools)
 ```
 
