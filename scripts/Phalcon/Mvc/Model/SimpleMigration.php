@@ -84,7 +84,7 @@ class SimpleMigration extends Migration
         $classDefinition = [];
 
         foreach (self::getObjectsList() as $row) {
-            $type = strtolower($row['type']);
+            $type = strtolower(self::getObjectType($row['name']));
 
             if (in_array($type, $types)) {
                 $classDefinition[$row['name']] = self::generate($version, $row['name'], $exportData);
