@@ -418,6 +418,7 @@ EOD;
         foreach ($parts as $part) {
             if (strlen($line . "$part, ") > $max) {
                 $lines[] = $line;
+                $line    = '';
             }
 
             $line .= "$part, ";
