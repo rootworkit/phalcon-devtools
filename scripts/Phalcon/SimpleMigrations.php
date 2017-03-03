@@ -57,7 +57,7 @@ class SimpleMigrations
 
         $wasMigrated = false;
         if ($objectName === '@') {
-            $migrations = ModelMigration::generateAll($versionItem, $exportData);
+            $migrations = ModelMigration::generateAll($versionItem, $exportData, $types);
             foreach ($migrations as $objectName => $migration) {
                 $objectFile = $migrationPath . DIRECTORY_SEPARATOR . $objectName . '.php';
                 $wasMigrated = file_put_contents($objectFile, $migration) || $wasMigrated;
