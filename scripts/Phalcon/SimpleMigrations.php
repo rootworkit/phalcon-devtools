@@ -34,6 +34,7 @@ class SimpleMigrations
     public static function generate(array $options)
     {
         $objectName         = $options['objectName'];
+        $types              = $options['types'];
         $exportData         = $options['exportData'];
         $migrationsDir      = $options['migrationsDir'];
         $version            = isset($options['version']) ? $options['version'] : null;

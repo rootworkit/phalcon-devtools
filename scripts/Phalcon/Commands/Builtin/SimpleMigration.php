@@ -36,8 +36,8 @@ class SimpleMigration extends Command
             'migrations=s'      => 'Migrations directory',
             'directory=s'       => 'Directory where the project was created',
             'object=s'          => 'DB object to migrate. (Default: all)',
-            'types=s'           => 'DB object types to migrate (separated by commas) '
-                                 . '[table,view,function,procedure,trigger]',
+            'types=s'           => 'DB object types to generate (separated by commas) '
+                                 . '[table,view,trigger,function,procedure,event]',
             'version=s'         => 'Version to migrate',
             'force'             => 'Forces to overwrite existing migrations',
             'no-auto-increment' => 'Disable auto increment (Generating only)',
@@ -76,6 +76,14 @@ class SimpleMigration extends Command
             $migrationsDir = $path . 'migrations';
         }
 
+        $allowedTypes = ['table', 'view', 'trigger', 'function', 'procedure', 'event'];
+        $typesOption = $this->getOption('types', null, 'table,view,trigger,function,procedure,event');
+        $types = explode(',', $typesOption);
+
+        if (count(array_diff($types, $allowedTypes))) {
+            throw new \InvalidArgumentException('One or more invalid types given');
+        }
+
         $objectName = $this->isReceivedOption('object') ? $this->getOption('object') : '@';
         $descr = $this->getOption('descr');
         $action = $this->getOption(['action', 1]);
@@ -87,6 +95,7 @@ class SimpleMigration extends Command
                 SimpleMigrations::generate([
                     'directory'       => $path,
                     'objectName'      => $objectName,
+                    'types'           => $types,
                     'exportData'      => $exportData,
                     'migrationsDir'   => $migrationsDir,
                     'version'         => $version,

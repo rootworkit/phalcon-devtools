@@ -73,17 +73,22 @@ class SimpleMigration extends Migration
     /**
      * Generates all the class migration definitions for certain database setup.
      *
-     * @param  string   $version
-     * @param  string   $exportData
+     * @param  string $version
+     * @param  string $exportData
+     * @param  array  $types
      *
      * @return array
      */
-    public static function generateAll($version, $exportData = null)
+    public static function generateAll($version, $exportData = null, $types = [])
     {
         $classDefinition = [];
 
         foreach (self::getObjectsList() as $row) {
-            $classDefinition[$row['name']] = self::generate($version, $row['name'], $exportData);
+            $type = strtolower($row['type']);
+
+            if (in_array($type, $types)) {
+                $classDefinition[$row['name']] = self::generate($version, $row['name'], $exportData);
+            }
         }
 
         return $classDefinition;
@@ -363,13 +368,19 @@ EOD;
     {
         $types      = ['EVENT', 'FUNCTION', 'PROCEDURE', 'TRIGGER'];
         $type       = strtoupper($type);
+        $resultKeys = [
+            'EVENT'     => 'Create Event',
+            'FUNCTION'  => 'Create Function',
+            'PROCEDURE' => 'Create Procedure',
+            'TRIGGER'   => 'SQL Original Statement',
+        ];
 
         if (!in_array($type, $types)) {
             throw new \InvalidArgumentException("Invalid create type '$type'");
         }
 
         $result     = self::$_connection->fetchOne("SHOW CREATE $type $name");
-        $createSql  = $result['Create ' . ucfirst(strtolower($type))];
+        $createSql  = $result[$resultKeys[$type]];
         $createSql  = 'CREATE ' . substr($createSql, strpos($createSql, "$type `$name`"));
         $lines      = explode("\n", $createSql);
         $lines      = array_map('trim', $lines);
