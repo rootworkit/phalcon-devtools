@@ -381,7 +381,8 @@ EOD;
 
         $result     = self::$_connection->fetchOne("SHOW CREATE $type $name");
         $createSql  = $result[$resultKeys[$type]];
-        $createSql  = 'CREATE ' . substr($createSql, strpos($createSql, "$type `$name`"));
+        preg_match("/$type `?$name/", $createSql, $matches, PREG_OFFSET_CAPTURE);
+        $createSql  = 'CREATE ' . substr($createSql, $matches[0][1]);
         $lines      = explode("\n", $createSql);
         $lines      = array_map('trim', $lines);
         $first      = array_shift($lines);
