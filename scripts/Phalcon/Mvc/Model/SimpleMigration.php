@@ -408,7 +408,7 @@ EOD;
      *
      * @return array
      */
-    protected static function getSqlLines($sql, $max = 55)
+    protected static function getSqlLines($sql, $max = 70)
     {
         $sql        = preg_replace('/ select /i', ' SELECT ', $sql);
         $parts      = explode(',', $sql);
@@ -416,12 +416,11 @@ EOD;
         $lines      = [];
 
         foreach ($parts as $part) {
-            if (strlen($line) < $max) {
-                $line .= "$part, ";
-            } else {
+            if (strlen($line . "$part, ") > $max) {
                 $lines[] = $line;
-                $line    = '';
             }
+
+            $line .= "$part, ";
         }
 
         $lastLine   = rtrim($line, ', ');
